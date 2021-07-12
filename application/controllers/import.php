@@ -76,7 +76,6 @@ class import extends CI_Controller{
 
   }
 
- 
 
   function import(){
 
@@ -95,39 +94,46 @@ class import extends CI_Controller{
         for($row=2; $row<=$highestRow; $row++){
 
           $kdskpd = $worksheet->getCellByColumnAndRow(0, $row)->getValue();
-           $skpd = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
-           $nospp = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
-           $nilaispp = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
-           $nospm = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
-           $nilaispm = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
-           $tanggal = $worksheet->getCellByColumnAndRow(6, $row)->getValue();
-           $jenispjk = $worksheet->getCellByColumnAndRow(7, $row)->getValue();
-           $nilaipajak = $worksheet->getCellByColumnAndRow(8, $row)->getValue();
-           $npwp = $worksheet->getCellByColumnAndRow(9, $row)->getValue();
-           $idbilling = $worksheet->getCellByColumnAndRow(10, $row)->getValue();
-           $ntpn = $worksheet->getCellByColumnAndRow(11, $row)->getValue();
+          $skpd = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
+          $nospp = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
+          $nilaispp = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
+          $nospm = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
+          $nilaispm = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
+          $tanggal = $worksheet->getCellByColumnAndRow(6, $row)->getValue();
+          $jenispjk = $worksheet->getCellByColumnAndRow(7, $row)->getValue();
+          $nilaipajak = $worksheet->getCellByColumnAndRow(8, $row)->getValue();
+          $npwp = $worksheet->getCellByColumnAndRow(9, $row)->getValue();
+          $idbilling = $worksheet->getCellByColumnAndRow(10, $row)->getValue();
+          $ntpn = $worksheet->getCellByColumnAndRow(11, $row)->getValue();
 
-           $data[] = array(
-
+          $data_insert = array(
             'kdskpd'  => $kdskpd,
             'skpd'  => $skpd,
-      			'nospp'  => $nospp,
-      			'nilaispp'  => $nilaispp,
-      			'nospm'  => $nospm,
-      			'nilaispm'  => $nilaispm,
-      			'tanggal'  => $tanggal,
-      			'jenispjk'  => $jenispjk,
-      			'nilaipajak'  => $nilaipajak,
-      			'npwp'  => $npwp,
-      			'idbilling'  => $idbilling,
+            'nospp'  => $nospp,
+            'nilaispp'  => $nilaispp,
+            'nospm'  => $nospm,
+            'nilaispm'  => $nilaispm,
+            'tanggal'  => $tanggal,
+            'jenispjk'  => $jenispjk,
+            'nilaipajak'  => $nilaipajak,
+            'npwp'  => $npwp,
+            'idbilling'  => $idbilling,
             'ntpn'   => $ntpn
-
-           );
-
+          );
+          
+          // Mengecek apakah satu baris data sudah terdapat pada database (berdasarkan `idbilling`)
+          $data_check = $this->m_import->single('idbilling', $idbilling);
+          if ($data_check) {
+            // Jika iya, cukup lakukan update
+            $this->m_import->update($data_check->idbilling, $data_insert);
+          }
+          else {
+            // Jika tidak, insert data
+            $this->m_import->insert_single($data_insert);
+          }
         }
 
       }
-      $this->m_import->insert($data);
 
       echo 'Data Imported successfully';
 
